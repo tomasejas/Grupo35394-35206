@@ -1,4 +1,4 @@
-import point.hs
+import Mod point.hs
 
 module City ( City, newC, nameC, distanceC )
    where
