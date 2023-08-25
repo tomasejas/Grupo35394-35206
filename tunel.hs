@@ -1,7 +1,7 @@
-import Mod link.hs
-
 module Tunel ( Tunel, newT, connectsT, usesT, delayT )
    where
+
+import link
 
 data Tunel = Tun [Link] deriving (Eq, Show)
 
@@ -9,10 +9,10 @@ newT :: [Link] -> Tunel
 newT links_conection = Tun links_conection
 
 connectsT :: City -> City -> Tunel -> Bool -- inidca si este tunel conceta estas dos ciudades distintas
-connectsT city_1 city_2 tunel = ( connectsL city_1 link && connectsL city_2 link ) -- nose
+connectsT city_1 city_2 ( Tun links_conection ) = ( any (\link -> linksL city_1 city_2 link) links_conection ) -- nose
 
 usesT :: Link -> Tunel -> Bool  -- indica si este tunel atraviesa ese link
-usesT link Tun ( _ ) = link `elem` -- nose pero es por ahi
+usesT link ( Tun links ) = link `elem` links -- nose pero es por ahi
 
 delayT :: Tunel -> Float -- la demora que sufre una conexion en este tunel
-delayT ( Tun (Lin _ _ ( Qua _ _ delay ) ) ) = delay -- dudoso si está bien escrito
+delayT ( Tun links ) = sum $ maps delayL links

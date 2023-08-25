@@ -1,7 +1,7 @@
-import Mod point.hs
-
 module City ( City, newC, nameC, distanceC )
    where
+
+import point
 
 data City = Cit String Point deriving (Eq, Show)
 
