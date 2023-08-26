@@ -6,10 +6,14 @@ import link
 data Tunel = Tun [Link] deriving (Eq, Show)
 
 newT :: [Link] -> Tunel
-newT links_conection = Tun links_conection
+newT links = Tun links
 
 connectsT :: City -> City -> Tunel -> Bool -- inidca si este tunel conceta estas dos ciudades distintas
-connectsT city_1 city_2 ( Tun links_conection ) = ( any (\link -> linksL city_1 city_2 link) links_conection ) -- nose
+connectsT city_1 city_2 (Tun links) =
+    case links of
+        [] -> False
+        [link] -> connectsL city_1 link && connectsL cityB link
+        firstLink : _ -> connectsL city_1 firstLink && connectsL city_2 (last links)
 
 usesT :: Link -> Tunel -> Bool  -- indica si este tunel atraviesa ese link
 usesT link ( Tun links ) = link `elem` links -- nose pero es por ahi
