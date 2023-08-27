@@ -1,12 +1,12 @@
 module City ( City, newC, nameC, distanceC )
    where
 
-import point
+import Point
 
 data City = Cit String Point deriving (Eq, Show)
 
 newC :: String -> Point -> City
-newC = city_name city_point = Cit city_name city_point
+newC city_name city_point = Cit city_name city_point
 
 nameC :: City -> String
 nameC ( Cit city_name _ ) = city_name
