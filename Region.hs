@@ -22,7 +22,7 @@ linkR (Reg cities links tunnels) city_1 city_2 quality | elem city_1 cities && e
 tunelR :: Region -> [ City ] -> Region -- genera una comunicación entre dos ciudades distintas de la región
 tunelR (Reg cities links tunnels) listCity | length listCity < 2 = Reg cities links tunnels
                                            | isPossibleT && capacityLinkForT getLinks((Reg cities links tunnels) listCity) = Reg cities links tunnels ++ newT  getLinks (Reg cities links tunnels) listCity
-                                           | otherwise = error "No es posible hacer el tunel ya que xisten ciudades no linkeadas." 
+                                           | otherwise = error "No es posible hacer el tunel ya que existen ciudades no linkeadas." 
 
 connectedR :: Region -> City -> City -> Bool -- indica si estas dos ciudades estan conectadas por un tunel
 connectedR ( Reg _ _ tunnels)  city_1 city_2 = any ( \tunnel -> connectsT city_1 city_2 tunnel ) tunnels
@@ -36,7 +36,7 @@ delayR (Reg cities links tunnels) city_1 city_2 =
    in sum $ map delayT tunnelss
 
 availableCapacityForR :: Region -> City -> City -> Int -- indica la capacidad disponible entre dos ciudades
-availableCapacityForR (Reg cities links tunnels ) city_1 city_2 = capacityL head getLinks (Reg cities links tunnels ) listCity
+availableCapacityForR (Reg cities links tunnels ) city_1 city_2 = capacityL (head (getLinks (Reg cities links tunnels ) listCity))
       where 
          listCity = [city_1, city_2]
 
