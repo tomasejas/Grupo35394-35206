@@ -1,4 +1,4 @@
-module Region ( Region, newR, foundR, linkR, tunelR, connectedR, linkedR, delayR, availableCapacityForR, usedCapacityForR )
+module Region ( Region, newR, foundR, linkR, tunelR, connectedR, linkedR, delayR, availableCapacityForR )
    where
 
 import Link
@@ -15,13 +15,13 @@ foundR :: Region -> City -> Region -- agrega una nueva ciudad a la región
 foundR (Reg cities links tunnels) city | not (elem city cities) = Reg (city : cities) links tunnels
                                        | otherwise = error "Ya xiste una ciudad con ese nombre, ingrese otro."
 linkR :: Region -> City -> City -> Quality -> Region -- enlaza dos ciudades de la región con un enlace de la calidad indicada
-linkR (Reg cities links tunnels) city_1 city_2 quality | elem city_1 cities && elem city_2 cities = Reg cities links ++ [newL city_1 city_2 quality] tunnels
+linkR (Reg cities links tunnels) city_1 city_2 quality | elem city_1 cities && elem city_2 cities = Reg cities (links ++ [newL city_1 city_2 quality]) tunnels
                                    | not (elem city_1 cities) = error "La primera ciudad no se encuentra en la region."
                                    | otherwise = error "La segunda ciudad no se encuentra en la region."
 
 tunelR :: Region -> [ City ] -> Region -- genera una comunicación entre dos ciudades distintas de la región
 tunelR (Reg cities links tunnels) listCity | length listCity < 2 = Reg cities links tunnels
-                                           | isPossibleT && capacityLinkForT getLinks((Reg cities links tunnels) listCity) = Reg cities links tunnels ++ newT  getLinks (Reg cities links tunnels) listCity
+                                           | isPossibleT (Reg cities links tunnels) (listCity) && capacityLinkForT (getLinks(Reg cities links tunnels) (listCity)) = Reg cities links (tunnels ++ [newT  (getLinks (Reg cities links tunnels) (listCity))])
                                            | otherwise = error "No es posible hacer el tunel ya que existen ciudades no linkeadas." 
 
 connectedR :: Region -> City -> City -> Bool -- indica si estas dos ciudades estan conectadas por un tunel
