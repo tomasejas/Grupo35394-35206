@@ -49,46 +49,48 @@ cityA = newC "City A" (newP 0 0)
 cityB = newC "City B" (newP 1 0)
 cityC = newC "City C" (newP 0 1)
 
-defaultQuality :: Quality
+--defaultQuality :: Quality
 defaultQuality = newQ "Default" 1 1.0
 
-testConnectedR :: Bool                              --TRUE
-testConnectedR =
-  let region1 = newR 
-      region2 = linkR region1 cityA cityB defaultQuality
-      region3 = tunelR region2 [cityA, cityB, cityC]
-  in
-    connectedR region1 cityA cityB == False &&
-    connectedR region2 cityA cityB == False &&
-    connectedR region2 cityA cityC == False &&
-    connectedR region3 cityA cityC == True
 
-testLinkedR :: Bool                                 --TRUE
-testLinkedR =
-  let region = newR
-      regionWithLink = linkR region cityA cityB defaultQuality
-  in
-    not (linkedR region cityA cityB) &&
-    linkedR regionWithLink cityA cityB 
+--queremos probar connectedR
 
-linkQuality :: Quality
-linkQuality = newQ "Link Quality" 3 2.0
+--1°: qué variables necesito?
+region =  newR
+region1 = foundR region cityA --1 ciudad
+region2 = foundR region1 cityB --2 ciudades
+region3 = linkR region2 cityA cityB defaultQuality
+region4 = foundR region3 cityC
+region5 = linkR region4 cityB cityC defaultQuality
+region6 = linkR region5 cityA cityC linkQuality
+--2°: Qué queremos probar?
+testConnectedR = [
+    connectedR region3 cityA cityB,
+    not (connectedR region2 cityA cityB),
+    not (connectedR region4 cityA cityC),
+    connectedR region5 cityB cityC,
+    True
+    ]
 
-testDelayR :: Bool                                  --TRUE
-testDelayR =
-  let region = newR
-      regionWithLink = linkR region cityA cityB linkQuality
-      regionWithTunnel = tunelR regionWithLink [cityA, cityC, cityB]
-  in
-    delayR region cityA cityB == 0.0 &&
-    delayR regionWithTunnel cityA cityB == 2.0
 
-testAvailableCapacityForR :: Bool                   --TRUE
-testAvailableCapacityForR =
-  let region = newR
-      regionWithLink = linkR region cityA cityB linkQuality
-      regionWithTunnel = tunelR regionWithLink [cityA, cityB, cityC]
-  in
-    availableCapacityForR region cityA cityB == 0 &&
-    availableCapacityForR regionWithTunnel cityA cityC == 0 &&
-    availableCapacityForR regionWithLink cityA cityB == 3
+testLinkedR = [
+    not(linkedR region2 cityA cityB),
+    linkedR region3 cityA cityB,
+    not (linkedR region5 cityA cityC),
+    linkedR region5 cityB cityC,
+    True
+    ]
+
+linkQuality = newQ "Link Quality" 3 2.0 
+
+testDelayR = [
+    delayR region3 cityA cityB,
+    delayR region5 cityB cityC,
+    delayR region6 cityA cityC
+    ]   
+
+testAvailableCapacityForR = [
+    availableCapacityForR region3 cityA cityB,
+    availableCapacityForR region6 cityA cityC,
+    availableCapacityForR region5 cityA cityB
+    ]

@@ -13,7 +13,7 @@ newR = Reg [] [] []
 
 foundR :: Region -> City -> Region -- agrega una nueva ciudad a la región
 foundR (Reg cities links tunnels) city | not (elem city cities) = Reg (city : cities) links tunnels
-                                       | otherwise = error "Ya xiste una ciudad con ese nombre, ingrese otro."
+                                       | otherwise = error "Ya existe una ciudad con ese nombre, ingrese otro."
 linkR :: Region -> City -> City -> Quality -> Region -- enlaza dos ciudades de la región con un enlace de la calidad indicada
 linkR (Reg cities links tunnels) city_1 city_2 quality | elem city_1 cities && elem city_2 cities = Reg cities (links ++ [newL city_1 city_2 quality]) tunnels
                                    | not (elem city_1 cities) = error "La primera ciudad no se encuentra en la region."
@@ -31,9 +31,15 @@ linkedR :: Region -> City -> City -> Bool -- indica si estas dos ciudades estan 
 linkedR (Reg _ links _) city_1 city_2 = any (linksL city_1 city_2) links
 
 delayR :: Region -> City -> City -> Float -- dadas dos ciudades conectadas, indica la demora
-delayR (Reg cities links tunnels) city_1 city_2 =
-   let tunnelss = filter (\tunnel -> connectsT city_1 city_2 tunnel) (tunnels)
-   in sum $ map delayT tunnelss
+delayR (Reg _ _ tunnels) cityA cityB =
+    case findTunnel tunnels of
+        Just tunnel -> delayT tunnel
+        Nothing -> 0.0
+  where
+    findTunnel (tunnel : rest)
+        | connectsT cityA cityB tunnel || connectsT cityB cityA tunnel = Just tunnel
+        | otherwise = findTunnel rest
+    findTunnel [] = Nothing
 
 availableCapacityForR :: Region -> City -> City -> Int -- indica la capacidad disponible entre dos ciudades
 availableCapacityForR (Reg cities links tunnels ) city_1 city_2 = capacityL (head (getLinks (Reg cities links tunnels ) listCity))
