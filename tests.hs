@@ -63,34 +63,34 @@ region3 = linkR region2 cityA cityB defaultQuality
 region4 = foundR region3 cityC
 region5 = linkR region4 cityB cityC defaultQuality
 region6 = linkR region5 cityA cityC linkQuality
---2°: Qué queremos probar?
+region7 =  tunelR region6 [cityA, cityB]
+region8 = tunelR region7 [cityA, cityC]
+linkQuality = newQ "Link Quality" 3 2.0
+
+
 testConnectedR = [
-    connectedR region3 cityA cityB,
-    not (connectedR region2 cityA cityB),
-    not (connectedR region4 cityA cityC),
-    connectedR region5 cityB cityC,
+    connectedR region3 cityA cityB,             -- False
+    not (connectedR region2 cityA cityB),       -- True
+    not (connectedR region4 cityA cityC),       -- True
+    connectedR region5 cityB cityC,             -- False
     True
     ]
-
 
 testLinkedR = [
-    not(linkedR region2 cityA cityB),
-    linkedR region3 cityA cityB,
-    not (linkedR region5 cityA cityC),
-    linkedR region5 cityB cityC,
+    not(linkedR region2 cityA cityB),       -- True
+    linkedR region3 cityA cityB,            -- True
+    not (linkedR region5 cityA cityC),      -- True
+    linkedR region5 cityB cityC,            -- True
     True
     ]
 
-linkQuality = newQ "Link Quality" 3 2.0 
-
 testDelayR = [
-    delayR region3 cityA cityB,
-    delayR region5 cityB cityC,
-    delayR region6 cityA cityC
+    delayR region7 cityA cityB,
+    delayR region8 cityA cityC
     ]   
 
 testAvailableCapacityForR = [
-    availableCapacityForR region3 cityA cityB,
-    availableCapacityForR region6 cityA cityC,
-    availableCapacityForR region5 cityA cityB
+    availableCapacityForR region3 cityA cityB,      -- 1
+    availableCapacityForR region6 cityA cityC,      -- 3
+    availableCapacityForR region5 cityA cityB       -- 1
     ]

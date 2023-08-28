@@ -31,15 +31,9 @@ linkedR :: Region -> City -> City -> Bool -- indica si estas dos ciudades estan 
 linkedR (Reg _ links _) city_1 city_2 = any (linksL city_1 city_2) links
 
 delayR :: Region -> City -> City -> Float -- dadas dos ciudades conectadas, indica la demora
-delayR (Reg _ _ tunnels) cityA cityB =
-    case findTunnel tunnels of
-        Just tunnel -> delayT tunnel
-        Nothing -> 0.0
-  where
-    findTunnel (tunnel : rest)
-        | connectsT cityA cityB tunnel || connectsT cityB cityA tunnel = Just tunnel
-        | otherwise = findTunnel rest
-    findTunnel [] = Nothing
+delayR (Reg cities links tunnels) city_1 city_2 =
+   let citytunnel =  filter (\tunnel -> connectsT city_1 city_2 tunnel) (tunnels)
+   in sum $ map delayT citytunnel
 
 availableCapacityForR :: Region -> City -> City -> Int -- indica la capacidad disponible entre dos ciudades
 availableCapacityForR (Reg cities links tunnels ) city_1 city_2 = capacityL (head (getLinks (Reg cities links tunnels ) listCity))
