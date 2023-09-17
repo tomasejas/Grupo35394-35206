@@ -2,7 +2,6 @@ package queue;
 
 import java.util.ArrayList;
 
-
 public abstract class Array {
 	public ArrayList<Object> dates;
 	public Array() {
