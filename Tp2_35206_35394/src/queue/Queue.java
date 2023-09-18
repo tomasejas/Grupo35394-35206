@@ -11,7 +11,7 @@ public Array array;
 
 	public Queue add( Object  cargo ) {
 		if (array.size() == 0) {
-		this.array = array.compound();
+		this.array = Array.compound();
 		}
 		array.add(cargo);
         return this;
@@ -20,7 +20,7 @@ public Array array;
 	public Object take() {
 		Object object = array.take();
 		if (array.size() == 0){
-			this.array = array.empty();	
+			this.array = Array.empty();	
 		}
 		return object;
 	}
