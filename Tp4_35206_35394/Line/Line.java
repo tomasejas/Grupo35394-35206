@@ -54,7 +54,7 @@ public class Line {
 
 
     public boolean finished() {
-        // Implementar lógica para determinar si el juego ha terminado
-        return false; // Placeholder, debes completar esta parte
+        // completar
+        return false; 
     }
 }
