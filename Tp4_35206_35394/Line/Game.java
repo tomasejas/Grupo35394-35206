@@ -8,11 +8,11 @@ public class Game {
         System.out.println( game.show() );
 
         while ( !game.finished() ) {
-            game.playRedkAt( prompt( "Negras? " ) );
+            game.playAtRed( prompt( "Negras? " ) );
             System.out.println( game.show() );
 
             if ( !game.finished() ) {
-                game.playBlueAt( prompt( "Blancas? " ) );
+                game.playAtBlue( prompt( "Blancas? " ) );
                 System.out.println( game.show() );
             }
         }

@@ -3,13 +3,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Line {
+	private int base;
+	private int height;
     private List<List<Character>> board;
     private char winVariant;
-    private boolean redTurn;
+    private String turn;
+    private Win horizontalWin;
+    private Win verticalWin;
+    private Win diagonalWin;
 
-    public Line(int base, int altura, char winVariant) {
+    public Line(int base, int height, char winVariant) {
         this.board = new ArrayList<>();
-        for (int i = 0; i < altura; i++) {
+        this.base = base;
+        this.height = height;
+        for (int i = 0; i < height; i++) {
             List<Character> row = new ArrayList<>();
             for (int j = 0; j < base; j++) {
                 row.add(null);
@@ -17,9 +24,21 @@ public class Line {
             board.add(row);
         }
 
+        this.turn = "red";
         this.winVariant = winVariant;
-        this.redTurn = true;
     }
+	
+	private void redTurn() {
+		this.turn = "red";
+	}
+	
+	private void blueTurn() {
+		this.turn = "blue";
+	}
+	
+	public String getTurn() {
+		return this.turn;
+	}
 
     public String show() {
         StringBuilder display = new StringBuilder();
@@ -33,14 +52,14 @@ public class Line {
         return display.toString();
     }
 
-    public void playRedkAt(int column) {
+    public void playAtRed(int column) {
         play(column, 'R');
-        redTurn = false;
+        blueTurn();
     }
 
-    public void playBlueAt(int column) {
+    public void playAtBlue(int column) {
         play(column, 'B');
-        redTurn = true;
+        redTurn();
     }
 
     private void play(int column, char color) {
@@ -52,9 +71,26 @@ public class Line {
         }
     }
 
-
     public boolean finished() {
-        // completar
         return false; 
+    }
+    
+    public boolean checkWin(char player, int row, int column) {
+        if (winVariant == 'A') {
+            return horizontalWin.checkWin(board, player, row, column) || verticalWin.checkWin(board, player, row, column);
+        } else if (winVariant == 'B') {
+            return diagonalWin.checkWin(board, player, row, column);
+        } else if (winVariant == 'C') {
+            return horizontalWin.checkWin(board, player, row, column) || verticalWin.checkWin(board, player, row, column) || diagonalWin.checkWin(board, player, row, column);
+        }
+        return false;
+    }
+    
+    public void setBoard(List<List<Character>> newBoard) {
+        for (int i = 0; i < board.size(); i++) {
+            for (int j = 0; j < board.get(0).size(); j++) {
+                board.get(i).set(j, newBoard.get(i).get(j));
+            }
+        }
     }
 }
