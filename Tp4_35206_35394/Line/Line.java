@@ -3,19 +3,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Line {
-	private int base;
-	private int height;
     private List<List<Character>> board;
     private char winVariant;
     private String turn;
+    private boolean isOver;
     private Win horizontalWin;
     private Win verticalWin;
     private Win diagonalWin;
 
     public Line(int base, int height, char winVariant) {
         this.board = new ArrayList<>();
-        this.base = base;
-        this.height = height;
         for (int i = 0; i < height; i++) {
             List<Character> row = new ArrayList<>();
             for (int j = 0; j < base; j++) {
@@ -26,6 +23,7 @@ public class Line {
 
         this.turn = "red";
         this.winVariant = winVariant;
+        this.isOver = false;
     }
 	
 	private void redTurn() {
@@ -72,15 +70,19 @@ public class Line {
     }
 
     public boolean finished() {
-        return false; 
+        return this.isOver; 
+    }
+    
+    public void setWin() {
+    	this.isOver = true;
     }
     
     public boolean checkWin(char player, int row, int column) {
-        if (winVariant == 'A') {
+        if (this.winVariant == 'A') {
             return horizontalWin.checkWin(board, player, row, column) || verticalWin.checkWin(board, player, row, column);
-        } else if (winVariant == 'B') {
+        } else if (this.winVariant == 'B') {
             return diagonalWin.checkWin(board, player, row, column);
-        } else if (winVariant == 'C') {
+        } else if (this.winVariant == 'C') {
             return horizontalWin.checkWin(board, player, row, column) || verticalWin.checkWin(board, player, row, column) || diagonalWin.checkWin(board, player, row, column);
         }
         return false;

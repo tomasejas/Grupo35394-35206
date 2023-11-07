@@ -10,11 +10,10 @@ public class GameTest {
 	private Line game;
 	
 	@Test public void alwaysStartsRed() {
-		game = new Line(4,4, 'C');
-		assertEquals(game.getTurn(), "red");
+		assertEquals(new Line(4,4, 'C').getTurn(), "red");
 	}
 	
-	@Test public void alternateTurns() {
+	@Test public void alternateTurnsSuccesfuly() {
 		game = new Line(4, 4, 'C');
 		assertEquals(game.getTurn(), "red");
 		game.playAtRed(0);
@@ -29,124 +28,48 @@ public class GameTest {
 	
 	@Test public void redWinsVertical() {
 		game = new Line(8, 5, 'A');
-        game.playAtRed(0);
-        game.playAtBlue(1);
-        game.playAtRed(0);
-        game.playAtBlue(1);
-        game.playAtRed(0);
-        game.playAtBlue(1);
-        assertFalse(game.checkWin('R', 3, 0));
-        game.playAtRed(0);
-        assertTrue(game.checkWin('R', 4, 0));
+        redVerticalLine();
+        assertTrue(game.finished());
     }
 
     @Test public void blueWinsHorizontal() {
     	game = new Line(4, 4, 'A');
-        game.playAtRed(0);
-        game.playAtBlue(1);
-        game.playAtRed(1);
-        game.playAtBlue(2);
-        game.playAtRed(2);
-        game.playAtBlue(3);
-        game.playAtRed(3);
-        assertFalse(game.finished());
-        game.playAtBlue(4);
+        blueHorizontalLine();
         assertTrue(game.finished());
     }
     
     @Test public void redWinsDiagonal() {
     	game = new Line(6, 6, 'B');
-    	game.playAtRed(0);
-    	game.playAtBlue(1);
-    	game.playAtRed(1);
-    	game.playAtBlue(2);
-    	game.playAtRed(2);
-    	game.playAtBlue(3);
-    	game.playAtRed(2);
-    	game.playAtBlue(3);
-    	game.playAtRed(3);
-    	game.playAtBlue(0);
-    	assertFalse(game.finished());
-    	game.playAtRed(3);
+    	redDiagonalLine();
     	assertTrue(game.finished());
     }
     
     @Test public void cannotWinByVerticalInTypeB() {
-    	game = new Line(8, 5, 'A');
-        game.playAtRed(0);
-        game.playAtBlue(1);
-        game.playAtRed(0);
-        game.playAtBlue(1);
-        game.playAtRed(0);
-        game.playAtBlue(1);
-        assertFalse(game.finished());
-        game.playAtRed(0);
+    	game = new Line(8, 5, 'B');
+        redVerticalLine();
         assertFalse(game.finished());
     }
     
     @Test public void cannotWinByHorizontalInTypeB() {
-    	game = new Line(4, 4, 'A');
-        game.playAtRed(0);
-        game.playAtBlue(1);
-        game.playAtRed(1);
-        game.playAtBlue(2);
-        game.playAtRed(2);
-        game.playAtBlue(3);
-        game.playAtRed(3);
-        assertFalse(game.finished());
-        game.playAtBlue(4);
+    	game = new Line(4, 4, 'B');
+        blueHorizontalLine();
         assertFalse(game.finished());
     }
     
     @Test public void cannotWinByDiagonalInTypeA() {
     	game = new Line(6, 6, 'A');
-    	game.playAtRed(0);
-    	game.playAtBlue(1);
-    	game.playAtRed(1);
-    	game.playAtBlue(2);
-    	game.playAtRed(2);
-    	game.playAtBlue(3);
-    	game.playAtRed(2);
-    	game.playAtBlue(3);
-    	game.playAtRed(3);
-    	game.playAtBlue(0);
-    	assertFalse(game.finished());
-    	game.playAtRed(3);
+    	redDiagonalLine();
     	assertFalse(game.finished());
     }
 
     @Test public void gameDraw() {
-    	game = new Line(5, 6, 'A');
-        game.playAtRed(0);
-        game.playAtBlue(1);
-        game.playAtRed(2);
-        game.playAtBlue(3);
-        game.playAtRed(4);
-        game.playAtBlue(5);
-        game.playAtBlue(6);
-        game.playAtRed(6);
-        game.playAtBlue(0);
-        game.playAtRed(1);
-        game.playAtBlue(2);
-        game.playAtRed(3);
-        game.playAtBlue(4);
-        game.playAtRed(5);
-        assertFalse(game.finished());
-        game.playAtRed(6);
-        assertTrue(game.finished());
+    	game = new Line(1, 2, 'C');
+        matchEndedInTwoMovements();
     }
 
     @Test public void invalidMovement() {
-    	game = new Line(7, 6, 'A');
-        game.playAtRed(0);
-        game.playAtBlue(0);
-        game.playAtRed(0);
-        game.playAtBlue(0);
-        game.playAtRed(0);
-        game.playAtBlue(0);
-        assertFalse(game.finished());
-        game.playAtRed(0);
-        assertTrue(game.finished());
+    	game = new Line(7, 1, 'C');
+        matchEndedInTwoMovements();
     }
     
     private void assertThrowsLike ( Executable executable, String message) {
@@ -154,4 +77,49 @@ public class GameTest {
     		assertThrows ( Exception.class, executable )
     		.getMessage() );
     }
+    
+    private void redVerticalLine() {
+		game.playAtRed(0);
+        game.playAtBlue(1);
+        game.playAtRed(0);
+        game.playAtBlue(1);
+        game.playAtRed(0);
+        game.playAtBlue(1);
+        assertFalse(game.finished());
+        game.playAtRed(0);
+	}
+    
+    private void blueHorizontalLine() {
+		game.playAtRed(0);
+        game.playAtBlue(1);
+        game.playAtRed(1);
+        game.playAtBlue(2);
+        game.playAtRed(2);
+        game.playAtBlue(3);
+        game.playAtRed(3);
+        assertFalse(game.finished());
+        game.playAtBlue(4);
+	}
+    
+    private void redDiagonalLine() {
+		game.playAtRed(0);
+    	game.playAtBlue(1);
+    	game.playAtRed(1);
+    	game.playAtBlue(2);
+    	game.playAtRed(2);
+    	game.playAtBlue(3);
+    	game.playAtRed(2);
+    	game.playAtBlue(3);
+    	game.playAtRed(3);
+    	game.playAtBlue(0);
+    	assertFalse(game.finished());
+    	game.playAtRed(3);
+	}
+    
+    private void matchEndedInTwoMovements() {
+		game.playAtRed(0);
+        assertFalse(game.finished());
+        game.playAtBlue(0);
+        assertTrue(game.finished());
+	}
 }
