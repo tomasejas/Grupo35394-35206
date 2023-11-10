@@ -9,67 +9,90 @@ import org.junit.jupiter.api.function.Executable;
 public class GameTest {
 	private Line game;
 	
+	@Test public void cannotCreateAnInvalidBoard() {
+		assertThrowsLike( () -> new Line(3, 3, new winTypeC()), "Board size should be at least 4x4" );
+	}
+	
 	@Test public void alwaysStartsRed() {
-		assertEquals(new Line(4,4, 'C').getTurn(), "red");
+		assertTrue(new Line(4,4, new winTypeC()).isRedTurn());
 	}
 	
 	@Test public void alternateTurnsSuccesfuly() {
-		game = new Line(4, 4, 'C');
-		assertEquals(game.getTurn(), "red");
-		game.playAtRed(0);
-		assertEquals(game.getTurn(), "blue");
+		game = new Line(4, 4, new winTypeC());
+		assertTrue(game.isRedTurn());
+		game.playAt(0, new RedTeam());
+		assertFalse(game.isRedTurn());
 	}
 	
 	@Test public void cannotPlayIfIsntItTurn() {
-		game = new Line(6, 6, 'C');
-		game.playAtRed(0);
-		assertThrowsLike( () -> game.playAtRed(0), "Is not the red turn." );
+		game = new Line(6, 6, new winTypeC());
+		game.playAt(0, new RedTeam() );
+		assertThrowsLike( () -> game.playAt(0, new RedTeam()), "Is not the red turn" );
 	}
 	
-	@Test public void redWinsVertical() {
-		game = new Line(8, 5, 'A');
-        redVerticalLine();
+	@Test public void blueWinsVertical() {
+		game = new Line(5, 5, new winTypeA());
+		blueVerticalRow();
         assertTrue(game.finished());
+        assertTrue(game.blueWon());
     }
 
-    @Test public void blueWinsHorizontal() {
-    	game = new Line(4, 4, 'A');
-        blueHorizontalLine();
+    @Test public void redWinsHorizontal() {
+    	game = new Line(4, 4, new winTypeA());
+    	redHorizontalRow();
         assertTrue(game.finished());
+        assertTrue(game.redWon());
     }
     
     @Test public void redWinsDiagonal() {
-    	game = new Line(6, 6, 'B');
-    	redDiagonalLine();
-    	assertTrue(game.finished());
+    	game = new Line(6, 6, new winTypeB());
+    	redDiagonalRow();
+        assertTrue(game.finished());
+        assertTrue(game.redWon());
     }
     
     @Test public void cannotWinByVerticalInTypeB() {
-    	game = new Line(8, 5, 'B');
-        redVerticalLine();
+    	game = new Line(5, 5, new winTypeB());
+		blueVerticalRow();
         assertFalse(game.finished());
+        checkNoneTeamWon();
     }
     
     @Test public void cannotWinByHorizontalInTypeB() {
-    	game = new Line(4, 4, 'B');
-        blueHorizontalLine();
+    	game = new Line(4, 4, new winTypeB());
+    	redHorizontalRow();
         assertFalse(game.finished());
+        checkNoneTeamWon();
     }
     
     @Test public void cannotWinByDiagonalInTypeA() {
-    	game = new Line(6, 6, 'A');
-    	redDiagonalLine();
-    	assertFalse(game.finished());
+    	game = new Line(5, 5, new winTypeA());
+    	redDiagonalRow();
+        assertFalse(game.finished());
+        checkNoneTeamWon();
     }
 
     @Test public void gameDraw() {
-    	game = new Line(1, 2, 'C');
-        matchEndedInTwoMovements();
+    	game = new Line(4, 4, new winTypeA());
+    	fillFirstTwoColumns();
+        game.playAt(3, new RedTeam());
+        game.playAt(2, new BlueTeam());
+        game.playAt(2, new RedTeam());
+        game.playAt(3, new BlueTeam());
+        game.playAt(3, new RedTeam());
+        game.playAt(2, new BlueTeam());
+        game.playAt(2, new RedTeam());
+        assertFalse(game.finished());
+        game.playAt(3, new BlueTeam());
+        assertTrue(game.finished());
+        checkNoneTeamWon();
     }
 
     @Test public void invalidMovement() {
-    	game = new Line(7, 1, 'C');
-        matchEndedInTwoMovements();
+    	game = new Line(4, 4, new winTypeC());
+    	fillFirstTwoColumns();
+        assertFalse(game.finished());
+		assertThrowsLike( () -> game.playAt(0, new RedTeam()), "Column is full" );
     }
     
     private void assertThrowsLike ( Executable executable, String message) {
@@ -78,48 +101,57 @@ public class GameTest {
     		.getMessage() );
     }
     
-    private void redVerticalLine() {
-		game.playAtRed(0);
-        game.playAtBlue(1);
-        game.playAtRed(0);
-        game.playAtBlue(1);
-        game.playAtRed(0);
-        game.playAtBlue(1);
+    private void redHorizontalRow() {
+		game.playAt(0, new RedTeam());
+        game.playAt(0, new BlueTeam());
+        game.playAt(1, new RedTeam());
+        game.playAt(1, new BlueTeam());
+        game.playAt(2, new RedTeam());
+        game.playAt(2, new BlueTeam());
         assertFalse(game.finished());
-        game.playAtRed(0);
+        game.playAt(3, new RedTeam());
 	}
     
-    private void blueHorizontalLine() {
-		game.playAtRed(0);
-        game.playAtBlue(1);
-        game.playAtRed(1);
-        game.playAtBlue(2);
-        game.playAtRed(2);
-        game.playAtBlue(3);
-        game.playAtRed(3);
+    private void blueVerticalRow() {
+		game.playAt(0, new RedTeam());
+        game.playAt(1, new BlueTeam());
+        game.playAt(2, new RedTeam());
+        game.playAt(1, new BlueTeam());
+        game.playAt(0, new RedTeam());
+        game.playAt(1, new BlueTeam());
+        game.playAt(2, new RedTeam());
         assertFalse(game.finished());
-        game.playAtBlue(4);
+        game.playAt(1, new BlueTeam());
 	}
     
-    private void redDiagonalLine() {
-		game.playAtRed(0);
-    	game.playAtBlue(1);
-    	game.playAtRed(1);
-    	game.playAtBlue(2);
-    	game.playAtRed(2);
-    	game.playAtBlue(3);
-    	game.playAtRed(2);
-    	game.playAtBlue(3);
-    	game.playAtRed(3);
-    	game.playAtBlue(0);
-    	assertFalse(game.finished());
-    	game.playAtRed(3);
+    private void redDiagonalRow() {
+		game.playAt(0, new RedTeam());
+        game.playAt(1, new BlueTeam());
+        game.playAt(1, new RedTeam());
+        game.playAt(2, new BlueTeam());
+        game.playAt(2, new RedTeam());
+        game.playAt(3, new BlueTeam());
+        game.playAt(2, new RedTeam());
+        game.playAt(3, new BlueTeam());
+        game.playAt(3, new RedTeam());
+        game.playAt(0, new BlueTeam());
+        assertFalse(game.finished());
+        game.playAt(3, new RedTeam());
 	}
     
-    private void matchEndedInTwoMovements() {
-		game.playAtRed(0);
-        assertFalse(game.finished());
-        game.playAtBlue(0);
-        assertTrue(game.finished());
+    private void checkNoneTeamWon() {
+		assertFalse(game.blueWon());
+        assertFalse(game.redWon());
+	}
+    
+    private void fillFirstTwoColumns() {
+		game.playAt(0, new RedTeam());
+        game.playAt(0, new BlueTeam());
+        game.playAt(0, new RedTeam());
+        game.playAt(0, new BlueTeam());
+        game.playAt(1, new RedTeam());
+        game.playAt(1, new BlueTeam());
+        game.playAt(1, new RedTeam());
+        game.playAt(1, new BlueTeam());
 	}
 }
