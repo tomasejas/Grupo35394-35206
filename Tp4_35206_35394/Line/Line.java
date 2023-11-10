@@ -11,10 +11,10 @@ public class Line {
     public int width;
     public static char RED = 'R';
     public static char BLUE = 'B';
-    public boolean isRedTurn;
+    protected Turn turn;
 
-    public Line(int base, int height, Win winvariant) {
-    	if (base < 4 || height < 4) throw new RuntimeException("Board size should be at least 4x4");
+    public Line(int base, int height, char winvariant) {
+
         this.board = new ArrayList<>(base);
         IntStream.range(0, base).forEach(i -> {
             List<Character> row = new ArrayList<>(height);
@@ -22,10 +22,10 @@ public class Line {
             this.board.add(row);
         });
 
-        this.winVar = winvariant;
+        this.winVar = Win.getWinVariant(winvariant);
         this.height = height;
         this.width = base;
-        this.isRedTurn = true;
+        this.turn = new RedTurn();
     }
 
     public String show() {
@@ -38,12 +38,25 @@ public class Line {
         });
 
         return board.toString();
+        // completar show con anuncio de quien le toca jugar y quien gano o si fue empate
+        // hacer test checkenado si gano rojo gano azul o empate
+        // hacer test si se trata de poner en una columna fuera de rango y implementar el error en el codigo
     }
 
-    public void playAt(int column, Team team) {
+    public void playAtRed(int column) {
 
         if(!finished()) {
-            team.playAt(column, this);
+            turn.playAtRed(column, this);
+        } else {
+            throw new RuntimeException("The game is finished");
+        }
+
+    }
+
+    public void playAtBlue(int column) {
+
+        if(!finished()) {
+            turn.playAtBlue(column, this);
         } else {
             throw new RuntimeException("The game is finished");
         }
@@ -60,16 +73,14 @@ public class Line {
                 .noneMatch(cell -> cell == ' ');
     }
     
-    public boolean isRedTurn() {
-        return isRedTurn;
-    }
+
     
     public boolean redWon() {
-        return winVar.checkWin(this) && !isRedTurn;
+        return winVar.checkWin(this) && !turn.isRedTurn();
     }
     
     public boolean blueWon() {
-    	return winVar.checkWin(this) && isRedTurn;
+    	return winVar.checkWin(this) && turn.isRedTurn();
     }
     
     public int checkRowForColumn(int column) {
