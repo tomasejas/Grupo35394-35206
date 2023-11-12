@@ -2,12 +2,9 @@ package Line;
 
 public class RedTurn extends Turn {
 
+    public static char RED = 'R';
     public void playAtRed(int column, Line game) {
-        if (column < 0 || column >= game.width) {
-            throw new RuntimeException("Column out of bounds");
-        }
-        int row = game.checkRowForColumn(column);
-        game.board.get(row).set(column, game.RED);
+        game.playAt(column, RED);
         game.turn = new BlueTurn();
     }
 

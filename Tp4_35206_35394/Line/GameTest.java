@@ -112,23 +112,23 @@ public class GameTest {
     	game = new Line(4, 4, 'C');
     	fillFirstTwoColumnsInATie();
         assertFalse(game.finished());
-		assertThrowsLike( () -> game.playAtRed(0), "Column is full" );
+		assertThrowsLike( () -> game.playAtRed(0), game.ColumnIsFull );
         game.playAtRed(2);
-        assertThrowsLike( () -> game.playAtBlue(1), "Column is full" );
+        assertThrowsLike( () -> game.playAtBlue(1), game.ColumnIsFull );
     }
 
     @Test public void invalidMoveFinishedGame() {
     	game = new Line(4, 4, 'C');
     	fillFirstFourColumnsInATie();
         assertTrue(game.finished());
-        assertThrowsLike( () -> game.playAtRed(0), "The game is finished" );
-        assertThrowsLike( () -> game.playAtBlue(1), "The game is finished" );
+        assertThrowsLike( () -> game.playAtRed(0), game.TheGameIsFinished );
+        assertThrowsLike( () -> game.playAtBlue(1), game.TheGameIsFinished );
     }
 
     @Test public void invalidMoveColumnOutOfBounds() {
     	game = new Line(4, 4, 'C');
-    	assertThrowsLike( () -> game.playAtRed(-1), "Column out of bounds" );
-    	assertThrowsLike( () -> game.playAtRed(4), "Column out of bounds" );
+    	assertThrowsLike( () -> game.playAtRed(-1), game.ColumnOutOfBounds );
+    	assertThrowsLike( () -> game.playAtRed(4), game.ColumnOutOfBounds );
     }
     
     private void assertThrowsLike ( Executable executable, String message) {

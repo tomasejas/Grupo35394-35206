@@ -9,9 +9,13 @@ public class Line {
     private Win winVar;
     public int height;
     public int width;
-    public static char RED = 'R';
-    public static char BLUE = 'B';
     protected Turn turn;
+
+    public static String TheGameIsFinished = "The game is finished";
+
+    public static String ColumnOutOfBounds = "Column out of bounds";
+
+    public static String ColumnIsFull = "Column is full";
 
     public Line(int base, int height, char winvariant) {
 
@@ -56,19 +60,27 @@ public class Line {
         if(!finished()) {
             turn.playAtRed(column, this);
         } else {
-            throw new RuntimeException("The game is finished");
+            throw new RuntimeException(TheGameIsFinished);
         }
 
     }
+
 
     public void playAtBlue(int column) {
 
         if(!finished()) {
             turn.playAtBlue(column, this);
         } else {
-            throw new RuntimeException("The game is finished");
+            throw new RuntimeException(TheGameIsFinished);
         }
 
+    }
+    public void playAt(int column, char player ) {
+        if (column < 0 || column >= this.width) {
+            throw new RuntimeException(ColumnOutOfBounds);
+        }
+        int row = checkRowForColumn(column);
+        board.get(row).set(column, player);
     }
 
     public boolean finished() {
@@ -95,7 +107,7 @@ public class Line {
         int row = IntStream.range(0, this.height)
                 .filter(i -> this.board.get(i).get(column) == ' ')
                 .reduce((first, second) -> second)
-                .orElseThrow(() -> new RuntimeException("Column is full"));
+                .orElseThrow(() -> new RuntimeException(ColumnIsFull));
 
         return row;
     }
