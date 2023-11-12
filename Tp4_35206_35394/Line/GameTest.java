@@ -31,6 +31,7 @@ public class GameTest {
 		game.playAtRed(0);
 		assertThrowsLike( () -> game.playAtRed(0), "Is not the red turn" );
 	}
+
     @Test public void blueDoesNotPlaysFirst() {
         game = new Line(4, 4, 'C');
         assertTrue(game.turn.isRedTurn());
@@ -87,6 +88,7 @@ public class GameTest {
         assertTrue(game.finished());
         assertTrue(game.redWon());
     }
+
     @Test public void WinByVerticalInTypeC() {
     	game = new Line(5, 5, 'C');
         blueVerticalRow();
@@ -205,5 +207,4 @@ public class GameTest {
         game.playAtRed(2);
         game.playAtBlue(3);
     }
-
 }
