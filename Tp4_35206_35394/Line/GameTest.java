@@ -31,6 +31,13 @@ public class GameTest {
 		game.playAtRed(0);
 		assertThrowsLike( () -> game.playAtRed(0), "Is not the red turn" );
 	}
+    @Test public void blueDoesNotPlaysFirst() {
+        game = new Line(4, 4, 'C');
+        assertTrue(game.turn.isRedTurn());
+        assertThrowsLike( () -> game.playAtBlue(0), "Is not the blue turn");
+        game.playAtRed(0);
+        assertFalse(game.turn.isRedTurn());
+    }
 	
 	@Test public void blueWinsVertical() {
 		game = new Line(5, 5, 'A');
@@ -59,7 +66,7 @@ public class GameTest {
         assertFalse(game.finished());
         checkNoneTeamWon();
     }
-    
+
     @Test public void cannotWinByHorizontalInTypeB() {
     	game = new Line(4, 4, 'B');
     	redHorizontalRow();
@@ -74,27 +81,54 @@ public class GameTest {
         checkNoneTeamWon();
     }
 
-    @Test public void gameDraw() {
+    @Test public void WinByDiagonalInTypeC() {
+    	game = new Line(5, 5, 'C');
+        redDiagonalRow();
+        assertTrue(game.finished());
+        assertTrue(game.redWon());
+    }
+    @Test public void WinByVerticalInTypeC() {
+    	game = new Line(5, 5, 'C');
+        blueVerticalRow();
+        assertTrue(game.finished());
+        assertTrue(game.blueWon());
+    }
+
+    @Test public void WinByHorizontalInTypeC() {
+    	game = new Line(4, 4, 'C');
+        redHorizontalRow();
+        assertTrue(game.finished());
+        assertTrue(game.redWon());
+    }
+
+    @Test public void tiedGame() {
     	game = new Line(4, 4, 'A');
-    	fillFirstTwoColumns();
-        game.playAtRed(3);
-        game.playAtBlue(2);
-        game.playAtRed(2);
-        game.playAtBlue(3);
-        game.playAtRed(3);
-        game.playAtBlue(2);
-        game.playAtRed(2);
-        assertFalse(game.finished());
-        game.playAtBlue(3);
+    	fillFirstFourColumnsInATie();
         assertTrue(game.finished());
         checkNoneTeamWon();
     }
 
-    @Test public void invalidMovement() {
+    @Test public void invalidMoveFullColumn() {
     	game = new Line(4, 4, 'C');
-    	fillFirstTwoColumns();
+    	fillFirstTwoColumnsInATie();
         assertFalse(game.finished());
 		assertThrowsLike( () -> game.playAtRed(0), "Column is full" );
+        game.playAtRed(2);
+        assertThrowsLike( () -> game.playAtBlue(1), "Column is full" );
+    }
+
+    @Test public void invalidMoveFinishedGame() {
+    	game = new Line(4, 4, 'C');
+    	fillFirstFourColumnsInATie();
+        assertTrue(game.finished());
+        assertThrowsLike( () -> game.playAtRed(0), "The game is finished" );
+        assertThrowsLike( () -> game.playAtBlue(1), "The game is finished" );
+    }
+
+    @Test public void invalidMoveColumnOutOfBounds() {
+    	game = new Line(4, 4, 'C');
+    	assertThrowsLike( () -> game.playAtRed(-1), "Column out of bounds" );
+    	assertThrowsLike( () -> game.playAtRed(4), "Column out of bounds" );
     }
     
     private void assertThrowsLike ( Executable executable, String message) {
@@ -135,7 +169,6 @@ public class GameTest {
         game.playAtBlue(3);
         game.playAtRed(3);
         game.playAtBlue(0);
-        assertFalse(game.finished());
         game.playAtRed(3);
 	}
     
@@ -143,8 +176,8 @@ public class GameTest {
 		assertFalse(game.blueWon());
         assertFalse(game.redWon());
 	}
-    
-    private void fillFirstTwoColumns() {
+
+    private void fillFirstTwoColumnsInATie() {
 		game.playAtRed(0);
         game.playAtBlue(0);
         game.playAtRed(0);
@@ -154,4 +187,23 @@ public class GameTest {
         game.playAtRed(1);
         game.playAtBlue(1);
 	}
+    private void fillFirstFourColumnsInATie(){
+        game.playAtRed(0);
+        game.playAtBlue(0);
+        game.playAtRed(0);
+        game.playAtBlue(0);
+        game.playAtRed(1);
+        game.playAtBlue(1);
+        game.playAtRed(1);
+        game.playAtBlue(1);
+        game.playAtRed(3);
+        game.playAtBlue(2);
+        game.playAtRed(2);
+        game.playAtBlue(3);
+        game.playAtRed(3);
+        game.playAtBlue(2);
+        game.playAtRed(2);
+        game.playAtBlue(3);
+    }
+
 }

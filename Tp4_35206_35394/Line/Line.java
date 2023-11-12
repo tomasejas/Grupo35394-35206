@@ -29,19 +29,27 @@ public class Line {
     }
 
     public String show() {
-    	StringBuilder board = new StringBuilder();
+            StringBuilder board = new StringBuilder();
 
-        this.board.stream().forEach(row -> {
-            board.append("|");
-            row.stream().forEach(cell -> board.append(cell));
-            board.append("|\n");
-        });
+            this.board.forEach(row -> {
+                board.append("|");
+                row.forEach(cell -> board.append(cell));
+                board.append("|\n");
+            });
 
-        return board.toString();
-        // completar show con anuncio de quien le toca jugar y quien gano o si fue empate
-        // hacer test checkenado si gano rojo gano azul o empate
-        // hacer test si se trata de poner en una columna fuera de rango y implementar el error en el codigo
-    }
+
+            board.append("Turno de: ").append( turn.isRedTurn() ? "Rojo" : "Azul").append("\n");
+
+            if (redWon()) {
+                board.append("¡El jugador Rojo ha ganado!");
+            } else if (blueWon()) {
+                board.append("¡El jugador Azul ha ganado!");
+            } else if (boardIsFull()) {
+                board.append("¡Es un empate!");
+            }
+
+            return board.toString();
+        }
 
     public void playAtRed(int column) {
 
